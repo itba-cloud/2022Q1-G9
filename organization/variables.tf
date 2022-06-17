@@ -1,7 +1,7 @@
 # ---------------------------------------------------------------------------
 # Variables
 # ---------------------------------------------------------------------------
-variable authorized_role {
+variable aws_authorized_role {
   description = "Authorized role for application operations"
   type        = string
 }

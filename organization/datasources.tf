@@ -2,13 +2,6 @@
 # Main resources
 # ---------------------------------------------------------------------------
 
-data "aws_region" "current" {
-  provider = aws.aws
-}
+data "aws_region" "current" {}
 
-data "template_file" "userdata" {
-  template = "../resources/html/index.html"
-#   vars = {
-#     ENDPOINT = "${aws_api_gateway_stage.this.invoke_url}"
-#   }
-}
+data "aws_caller_identity" "current" {}

@@ -7,6 +7,7 @@ locals {
 
     # S3
     bucket_name = "pechi-itba-cloud-computing"
+    static_resources        = "resources"
     s3 = {
 
     website = {
