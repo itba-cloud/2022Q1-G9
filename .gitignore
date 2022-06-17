@@ -133,3 +133,6 @@ dmypy.json
 .terraform.*
 terraform.tfstate*
 .terraform*
+
+# OSX
+.DS_Store
