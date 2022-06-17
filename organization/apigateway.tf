@@ -19,7 +19,7 @@ resource "aws_api_gateway_method" "test_GET" {
 }
 
 # PATH /test - GET method INTEGRATION
-resource "aws_api_gateway_integration" "integration" {
+resource "aws_api_gateway_integration" "lambda_response" {
   rest_api_id             = aws_api_gateway_rest_api.api.id
   resource_id             = aws_api_gateway_resource.test.id
   http_method             = aws_api_gateway_method.test_GET.http_method
@@ -43,7 +43,7 @@ resource "aws_api_gateway_deployment" "default" {
     redeployment = sha1(jsonencode([
       aws_api_gateway_resource.test,
       aws_api_gateway_method.test_GET,
-      aws_api_gateway_integration.integration,
+      aws_api_gateway_integration.lambda_response,
     ]))
   }
 
@@ -74,5 +74,11 @@ resource "aws_api_gateway_integration_response" "lambda_response" {
   resource_id = aws_api_gateway_resource.test.id
   http_method = aws_api_gateway_method.test_GET.http_method
   status_code = aws_api_gateway_method_response.response_200.status_code
+  
+  depends_on = [
+    aws_api_gateway_integration.lambda_response
+  ]
 }
+
+  
 

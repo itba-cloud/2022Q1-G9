@@ -6,7 +6,7 @@ locals {
     account_id = data.aws_caller_identity.current.account_id
 
     # S3
-    bucket_name = "grisu-itba-cloud-computing"
+    bucket_name = "pechi-itba-cloud-computing"
     s3 = {
 
     website = {

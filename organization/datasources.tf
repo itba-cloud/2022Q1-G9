@@ -7,7 +7,7 @@ data "aws_region" "current" {
 }
 
 data "template_file" "userdata" {
-  template = file("${path.module}/html/index.html")
+  template = "../resources/html/index.html"
 #   vars = {
 #     ENDPOINT = "${aws_api_gateway_stage.this.invoke_url}"
 #   }
