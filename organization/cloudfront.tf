@@ -1,93 +1,74 @@
-# resource "aws_cloudfront_distribution" "api_gateway" {
-#   origin {
-#     domain_name = aws_api_gateway_rest_api.this.name
-#     origin_id   = aws_api_gateway_rest_api.this.id
-#   }
 
-#   enabled             = true
-#   is_ipv6_enabled     = true
-#   comment             = "Api Gateway"
+data "aws_cloudfront_cache_policy" "optimized" {
+    name = "Managed-CachingOptimized"
+}
 
-#   aliases = ["cloud.franciscobernad.com.ar"]
+data "aws_cloudfront_cache_policy" "disabled" {
+    name = "Managed-CachingDisabled"
+}
 
-#   default_cache_behavior {
-#     allowed_methods  = ["DELETE", "GET", "HEAD", "OPTIONS", "PATCH", "POST", "PUT"]
-#     cached_methods   = ["GET", "HEAD"]
-#     target_origin_id = aws_api_gateway_rest_api.this.id
 
-#     forwarded_values {
-#       query_string = false
+resource "aws_cloudfront_distribution" "api_gateway" {
+    # https://p2kjiyku4m.execute-api.us-east-1.amazonaws.com/
+  origin {
+    domain_name = join(".", [aws_api_gateway_rest_api.this.id, "execute-api", var.aws_region, "amazonaws.com"])
+    origin_id   = "api_gateway"
+    custom_origin_config {
+      http_port = 80
+      https_port = 443
+      origin_protocol_policy = "https-only"
+      origin_ssl_protocols=  ["TLSv1.2"]
+    }
+  }
 
-#       cookies {
-#         forward = "none"
-#       }
-#     }
+  enabled             = true
+  is_ipv6_enabled     = true
+  comment             = "api Gateway"
 
-#     viewer_protocol_policy = "allow-all"
-#     min_ttl                = 0
-#     default_ttl            = 3600
-#     max_ttl                = 86400
-#   }
+  aliases = ["cloud.franciscobernad.com.ar"]
 
-#   # Cache behavior with precedence 0
-#   ordered_cache_behavior {
-#     path_pattern     = "/content/immutable/*"
-#     allowed_methods  = ["GET", "HEAD", "OPTIONS"]
-#     cached_methods   = ["GET", "HEAD", "OPTIONS"]
-#     target_origin_id = aws_api_gateway_rest_api.this.id
+ 
+  default_cache_behavior {
+    allowed_methods  = ["DELETE", "GET", "HEAD", "OPTIONS", "PATCH", "POST", "PUT"]
+    cached_methods   = ["GET", "HEAD"]
+    target_origin_id = "api_gateway"
+    cache_policy_id  = data.aws_cloudfront_cache_policy.optimized.id
 
-#     forwarded_values {
-#       query_string = false
-#       headers      = ["Origin"]
+    viewer_protocol_policy = "allow-all"
+    min_ttl                = 0
+  }
 
-#       cookies {
-#         forward = "none"
-#       }
-#     }
+  # Cache behavior with precedence 0
+  # ordered_cache_behavior {
+  #   path_pattern     = "/api/*"
+  #   allowed_methods  = ["GET", "HEAD", "OPTIONS"]
+  #   cached_methods   = ["GET", "HEAD", "OPTIONS"]
+  #   cache_policy_id  = data.aws_cloudfront_cache_policy.disabled.id
+  #   target_origin_id = aws_api_gateway_rest_api.this.id
 
-#     min_ttl                = 0
-#     default_ttl            = 86400
-#     max_ttl                = 31536000
-#     compress               = true
-#     viewer_protocol_policy = "redirect-to-https"
-#   }
+  #   min_ttl                = 0
+  #   compress               = true
+  #   viewer_protocol_policy = "redirect-to-https"
+  # }
 
-#   # Cache behavior with precedence 1
-#   ordered_cache_behavior {
-#     path_pattern     = "/content/*"
-#     allowed_methods  = ["GET", "HEAD", "OPTIONS"]
-#     cached_methods   = ["GET", "HEAD"]
-#     target_origin_id = aws_api_gateway_rest_api.this.id
+  price_class = "PriceClass_100"
 
-#     forwarded_values {
-#       query_string = false
+  restrictions {
+    geo_restriction {
+      restriction_type = "none"
+    }
+  }
 
-#       cookies {
-#         forward = "none"
-#       }
-#     }
+  tags = {
+    Name = "api gateway cdn"
+    Environment = "production"
+  }
 
-#     min_ttl                = 0
-#     default_ttl            = 3600
-#     max_ttl                = 86400
-#     compress               = true
-#     viewer_protocol_policy = "redirect-to-https"
-#   }
+  viewer_certificate {
+    cloudfront_default_certificate = true
 
-#   price_class = "PriceClass_200"
-
-#   restrictions {
-#     geo_restriction {
-#       restriction_type = "whitelist"
-#       locations        = ["US", "CA", "GB", "DE"]
-#     }
-#   }
-
-#   tags = {
-#     Environment = "production"
-#   }
-
-#   viewer_certificate {
-#     cloudfront_default_certificate = true
-#   }
-# }
+    acm_certificate_arn = aws_acm_certificate.this.arn
+    minimum_protocol_version = "TLSv1.2_2021"
+    ssl_support_method       =  "sni-only"
+  }
+}

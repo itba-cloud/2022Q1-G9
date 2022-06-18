@@ -1,7 +1,13 @@
 # API GATEWAY
 resource "aws_api_gateway_rest_api" "this" {
   name = "main"
+
+  endpoint_configuration {
+    types = ["REGIONAL"]
+  }
 }
+
+
 
 # PATH /test
 resource "aws_api_gateway_resource" "test" {
@@ -51,7 +57,7 @@ resource "aws_api_gateway_integration_response" "lambda_response" {
 
 
 # DEPLOYMENT
-resource "aws_api_gateway_deployment" "default" {
+resource "aws_api_gateway_deployment" "this" {
   rest_api_id = aws_api_gateway_rest_api.this.id
 
   triggers = {
@@ -76,7 +82,7 @@ resource "aws_api_gateway_deployment" "default" {
 
 # PROD STAGE
 resource "aws_api_gateway_stage" "prod" {
-  deployment_id = aws_api_gateway_deployment.default.id
+  deployment_id = aws_api_gateway_deployment.this.id
   rest_api_id   = aws_api_gateway_rest_api.this.id
   stage_name    = "prod"
 }
