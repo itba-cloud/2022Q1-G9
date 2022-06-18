@@ -81,19 +81,29 @@ resource "aws_api_gateway_deployment" "this" {
 }
 
 # PROD STAGE
-resource "aws_api_gateway_stage" "prod" {
+resource "aws_api_gateway_stage" "api" {
   deployment_id = aws_api_gateway_deployment.this.id
   rest_api_id   = aws_api_gateway_rest_api.this.id
-  stage_name    = "prod"
+  stage_name    = "api"
 }
 
 resource "aws_api_gateway_method_settings" "this" {
   rest_api_id = aws_api_gateway_rest_api.this.id
-  stage_name  = aws_api_gateway_stage.prod.stage_name
+  stage_name  = aws_api_gateway_stage.api.stage_name
   method_path = "*/*"
   settings {
     
   }
+}
+
+
+resource "aws_lambda_permission" "apigw_lambda" {
+  statement_id  = "AllowExecutionFromAPIGateway"
+  action        = "lambda:InvokeFunction"
+  function_name = aws_lambda_function.test.function_name
+  principal     = "apigateway.amazonaws.com"
+
+  source_arn = "arn:aws:execute-api:${var.aws_region}:${local.account_id}:${aws_api_gateway_rest_api.this.id}/*/${aws_api_gateway_method.test_GET.http_method}${aws_api_gateway_resource.test.path}"
 }
 
   

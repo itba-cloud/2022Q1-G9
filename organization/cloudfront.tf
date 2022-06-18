@@ -12,7 +12,7 @@ resource "aws_cloudfront_distribution" "api_gateway" {
     # https://p2kjiyku4m.execute-api.us-east-1.amazonaws.com/
   origin {
     domain_name = join(".", [aws_api_gateway_rest_api.this.id, "execute-api", var.aws_region, "amazonaws.com"])
-    origin_id   = "api_gateway"
+    origin_id   = aws_api_gateway_rest_api.this.id
     custom_origin_config {
       http_port = 80
       https_port = 443
@@ -23,7 +23,7 @@ resource "aws_cloudfront_distribution" "api_gateway" {
 
   enabled             = true
   is_ipv6_enabled     = true
-  comment             = "api Gateway"
+  comment             = "Api Gateway"
 
   aliases = ["cloud.franciscobernad.com.ar"]
 
@@ -31,25 +31,24 @@ resource "aws_cloudfront_distribution" "api_gateway" {
   default_cache_behavior {
     allowed_methods  = ["DELETE", "GET", "HEAD", "OPTIONS", "PATCH", "POST", "PUT"]
     cached_methods   = ["GET", "HEAD"]
-    target_origin_id = "api_gateway"
+    target_origin_id = aws_api_gateway_rest_api.this.id
     cache_policy_id  = data.aws_cloudfront_cache_policy.optimized.id
-
-    viewer_protocol_policy = "allow-all"
-    min_ttl                = 0
+    
+    compress               = true
+    viewer_protocol_policy = "redirect-to-https"
   }
 
   # Cache behavior with precedence 0
-  # ordered_cache_behavior {
-  #   path_pattern     = "/api/*"
-  #   allowed_methods  = ["GET", "HEAD", "OPTIONS"]
-  #   cached_methods   = ["GET", "HEAD", "OPTIONS"]
-  #   cache_policy_id  = data.aws_cloudfront_cache_policy.disabled.id
-  #   target_origin_id = aws_api_gateway_rest_api.this.id
+  ordered_cache_behavior {
+    path_pattern     = "/api/*"
+    allowed_methods  = ["GET", "HEAD", "OPTIONS"]
+    cached_methods   = ["GET", "HEAD", "OPTIONS"]
+    cache_policy_id  = data.aws_cloudfront_cache_policy.disabled.id
+    target_origin_id = aws_api_gateway_rest_api.this.id
 
-  #   min_ttl                = 0
-  #   compress               = true
-  #   viewer_protocol_policy = "redirect-to-https"
-  # }
+    compress               = true
+    viewer_protocol_policy = "redirect-to-https"
+  }
 
   price_class = "PriceClass_100"
 
