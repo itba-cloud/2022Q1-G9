@@ -25,7 +25,7 @@ resource "aws_cloudfront_distribution" "api_gateway" {
   is_ipv6_enabled     = true
   comment             = "Api Gateway"
 
-  aliases = ["cloud.franciscobernad.com.ar"]
+  aliases = [var.base_domain]
 
  
   default_cache_behavior {
