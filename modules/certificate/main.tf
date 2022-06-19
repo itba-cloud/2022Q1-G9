@@ -1,5 +1,5 @@
 data "aws_route53_zone" "this" {
-  name         = var.base_domain
+  name = var.base_domain
 }
 
 resource "aws_acm_certificate" "this" {
@@ -7,7 +7,7 @@ resource "aws_acm_certificate" "this" {
   validation_method = "DNS"
 
   tags = {
-    Environment = "production"
+    Name = "SSL Certificate"
   }
 
   lifecycle {

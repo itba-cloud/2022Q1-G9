@@ -1,41 +1,27 @@
+# Authors
+
+- [Francisco Bernad](https://github.com/FrBernad)
+- [Nicolás Rampoldi](https://github.com/NicolasRampoldi)
+- [Ignacio Vazquez](https://github.com/igvazquez)
+- [Santiago Burgos](https://github.com/santiagoburgos)
 # CLOUD COMPUTING - TP3
 
-### TODO:
+## Setup
+### Terraform
 
-- Como minimo 6 elementos definidos en el diagrama de arquitectura de la segunda entrega:
-    - Route 53
-    - CloudFront
-    - API Gateway
-    - ACM
-    - Lambdas
-    - S3
+Install [terraform](https://learn.hashicorp.com/tutorials/terraform/install-cli) following official instructions.
 
-- Uso de modulos
+### Amazon Web Services
 
-- Uso de variables y outputs
+1. Create a new AWS user for terraform with `AdministratorAccess` permissions.
+2. Generate and store user access keys inside `$HOME/.aws/credentials`.
+3. Create a `Route53` `HostedZone` with the domain to be used.
 
-- Uso de al menos cuatro (4) de las siguientes funciones:
-    - Numeric
-    - String
-    - Collection
-    - Encoding
-    - Filesystem
-    - Date & Time
-    - Hash & Crypto
-    - IP Network
-    - Type Conversion
+### 6. Deploy Project
 
-- Uso de al menos tres (3) siguientes meta-argumentos:
-    - depends_on
-    - for_each
-    - count
-    - lifecycle
+1. Configure variables inside `config.tfvars`:
+    - `aws_region`: AWS region to deploy.
+    - `aws_authorized_role`: role with permissions to create and modify resources.
+    - `base_domain`: application domain or subdomain created in `Route53` `HostedZone` .
 
-### Rubrica de evaluacion:
-- Correcta utilizacion de los componentes requeridos
-- Cantidad y nivel de dificultad de los componentes elegidos.
-- Diseno y estructura del codigo
-    - Naming conventions
-    - Estructura y formato del proyecto
-    - Principio de DRY (Don't Repeat Yourself)
-    - Parametrizacion de modulos
+2. Run `terraform apply -var-file=config.tfvars` to deploy.

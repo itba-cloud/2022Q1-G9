@@ -7,8 +7,6 @@ resource "aws_api_gateway_rest_api" "this" {
   }
 }
 
-
-
 # PATH /test
 resource "aws_api_gateway_resource" "test" {
   path_part   = "test"
@@ -31,7 +29,7 @@ resource "aws_api_gateway_integration" "lambda_response" {
   http_method             = aws_api_gateway_method.test_GET.http_method
   integration_http_method = "POST"
   type                    = "AWS"
-  uri                     = aws_lambda_function.test.invoke_arn
+  uri                     = var.lambda.invoke_arn
 }
 
 
@@ -96,14 +94,13 @@ resource "aws_api_gateway_method_settings" "this" {
   }
 }
 
-
 resource "aws_lambda_permission" "apigw_lambda" {
   statement_id  = "AllowExecutionFromAPIGateway"
   action        = "lambda:InvokeFunction"
-  function_name = aws_lambda_function.test.function_name
+  function_name = var.lambda.function_name
   principal     = "apigateway.amazonaws.com"
 
-  source_arn = "arn:aws:execute-api:${var.aws_region}:${local.account_id}:${aws_api_gateway_rest_api.this.id}/*/${aws_api_gateway_method.test_GET.http_method}${aws_api_gateway_resource.test.path}"
+  source_arn = local.lambda_source_arn
 }
 
   

@@ -8,11 +8,11 @@ data "aws_cloudfront_cache_policy" "disabled" {
 }
 
 
-resource "aws_cloudfront_distribution" "api_gateway" {
+resource "aws_cloudfront_distribution" "main" {
     # https://p2kjiyku4m.execute-api.us-east-1.amazonaws.com/
   origin {
-    domain_name = join(".", [aws_api_gateway_rest_api.this.id, "execute-api", var.aws_region, "amazonaws.com"])
-    origin_id   = aws_api_gateway_rest_api.this.id
+    domain_name = var.domain_name
+    origin_id   = var.origin_id
     custom_origin_config {
       http_port = 80
       https_port = 443
@@ -23,15 +23,15 @@ resource "aws_cloudfront_distribution" "api_gateway" {
 
   enabled             = true
   is_ipv6_enabled     = true
-  comment             = "Api Gateway"
+  
+  comment             = var.comment
 
-  aliases = [var.base_domain]
-
+  aliases = length(var.aliases) > 0 ? var.aliases : []
  
   default_cache_behavior {
     allowed_methods  = ["DELETE", "GET", "HEAD", "OPTIONS", "PATCH", "POST", "PUT"]
     cached_methods   = ["GET", "HEAD"]
-    target_origin_id = aws_api_gateway_rest_api.this.id
+    target_origin_id = var.origin_id
     cache_policy_id  = data.aws_cloudfront_cache_policy.optimized.id
     
     compress               = true
@@ -44,7 +44,7 @@ resource "aws_cloudfront_distribution" "api_gateway" {
     allowed_methods  = ["GET", "HEAD", "OPTIONS"]
     cached_methods   = ["GET", "HEAD", "OPTIONS"]
     cache_policy_id  = data.aws_cloudfront_cache_policy.disabled.id
-    target_origin_id = aws_api_gateway_rest_api.this.id
+    target_origin_id = var.origin_id
 
     compress               = true
     viewer_protocol_policy = "redirect-to-https"
@@ -58,16 +58,13 @@ resource "aws_cloudfront_distribution" "api_gateway" {
     }
   }
 
-  tags = {
-    Name = "api gateway cdn"
-    Environment = "production"
-  }
+  tags = var.tags
 
   viewer_certificate {
     cloudfront_default_certificate = true
 
-    acm_certificate_arn = aws_acm_certificate.this.arn
+    acm_certificate_arn = var.certificate_arn
     minimum_protocol_version = "TLSv1.2_2021"
-    ssl_support_method       =  "sni-only"
+    ssl_support_method       = "sni-only"
   }
 }

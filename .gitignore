@@ -135,4 +135,4 @@ terraform.tfstate*
 .terraform*
 
 # OSX
-.DS_Store
+*.DS_Store
