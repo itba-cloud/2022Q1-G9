@@ -1,10 +1,20 @@
-variable domain_name{
-  description = "Cloudfront distribution domain name"
+variable s3_domain_name{
+  description = "Cloudfront distribution domain name for s3"
   type = string
 }
 
-variable origin_id{
-  description = "Cloudfront distribution origin id"
+variable s3_origin_id{
+  description = "Cloudfront distribution origin id for s3"
+  type = string
+}
+
+variable api_domain_name{
+  description = "Cloudfront distribution domain name for api gateway"
+  type = string
+}
+
+variable api_origin_id{
+  description = "Cloudfront distribution origin id for api gateway"
   type = string
 }
 
@@ -26,4 +36,9 @@ variable tags{
 variable certificate_arn{
   description = "Cloudfront distribution certificate arn"
   type = string
+}
+
+variable "OAI" {
+  description = "OAI"
+  type        = map(any)
 }

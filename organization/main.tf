@@ -21,17 +21,35 @@ module "dns" {
       cloudfront_dist = module.cdn.cloudfront_distribution
 }
 
+resource "aws_cloudfront_origin_access_identity" "cdn" {
+  comment = "Cloudfront OAI"
+}
+
 module "cdn" {
       source = "../modules/cdn"
 
-      domain_name = module.api_gateway.domain_name
-      origin_id = module.api_gateway.id
+      api_domain_name = module.api_gateway.domain_name
+      api_origin_id = "api"
+
+      s3_domain_name = module.s3.domain_name
+      s3_origin_id = "frontend"
+
+      OAI = aws_cloudfront_origin_access_identity.cdn
+
       comment = "main CDN"
-      aliases = [var.base_domain]
+      aliases = [var.base_domain, "*.${var.base_domain}"]
       tags = {
             Name = "main CDN"
       }
       certificate_arn = module.cerificate.arn
+}
+
+module "s3" {
+      source = "../modules/s3"
+      src = local.bucket_source
+      name = local.bucket_name
+      aws_region = var.aws_region
+      bucket_access_OAI = [aws_cloudfront_origin_access_identity.cdn.iam_arn]
 }
 
 module "api_gateway" {
@@ -47,10 +65,10 @@ module "api_gateway" {
 module "lambda" {
       source = "../modules/lambda"
 
-      function_name = "test_lambda"
-      filename      = "../resources/lambdacode.zip"
-      handler       = "lambdacode.handler"
-      runtime = "nodejs12.x"
+      function_name = local.lambda_name
+      filename      = "${local.lambda_source}/lambdacode.zip"
+      handler       = local.lambda_handler
+      runtime       = local.lambda_runtime
       aws_authorized_role = var.aws_authorized_role
 
       subnet_ids = module.vpc.private_subnets_ids
@@ -60,8 +78,4 @@ module "lambda" {
       }
 }
 
-module "s3" {
-      source = "../modules/s3"
 
-      src               = local.static_resources
-}
