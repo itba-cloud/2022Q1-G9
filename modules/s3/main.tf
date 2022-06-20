@@ -46,7 +46,7 @@ resource "aws_s3_object" "data" {
   bucket = aws_s3_bucket.site.bucket
   key    = each.value.file
   source = "${var.src}/${each.value.file}"
-  etag   = filesha1x("${var.src}/${each.value.file}")
+  etag   = filemd5("${var.src}/${each.value.file}")
   content_type = each.value.mime
 }
 
