@@ -42,3 +42,13 @@ variable "OAI" {
   description = "OAI"
   type        = map(any)
 }
+
+variable "api_secret_header" {
+  description = "Header where secret between API and CDN"
+  type        = string
+}
+
+variable "api_secret" {
+  description = "Secret between API and CDN"
+  type        = string
+}

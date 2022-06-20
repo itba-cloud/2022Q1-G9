@@ -20,6 +20,11 @@ resource "aws_cloudfront_distribution" "main" {
   origin {
     domain_name = var.api_domain_name
     origin_id   = var.api_origin_id
+
+    custom_header {
+      name  = var.api_secret_header
+      value = var.api_secret
+    }
     custom_origin_config {
       http_port = 80
       https_port = 443

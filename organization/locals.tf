@@ -13,10 +13,6 @@ locals {
     bucket_source = "../resources/s3"
     bucket_name = "cloud-site"
 
-    # LAMBDA
-    lambda_source = "../resources/lambda"
-    lambda_name = "test_lambda"
-    lambda_handler = "lambdacode.handler"
-    lambda_runtime = "nodejs12.x"
+    api_cdn_secret_header = "X-API-CDN-Secret-V1"
 
 }

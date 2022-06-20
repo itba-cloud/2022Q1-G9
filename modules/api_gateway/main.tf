@@ -85,15 +85,23 @@ resource "aws_api_gateway_stage" "api" {
   stage_name    = "api"
 }
 
-resource "aws_api_gateway_method_settings" "this" {
-  rest_api_id = aws_api_gateway_rest_api.this.id
-  stage_name  = aws_api_gateway_stage.api.stage_name
-  method_path = "*/*"
-  settings {
-    
-  }
-}
+# API GATEWAY PLAN AND KEY
+# resource "aws_api_gateway_usage_plan" "api" {
+#   name = "api plan"
 
+#   api_stages {
+#     api_id = aws_api_gateway_rest_api.this.id
+#     stage  = aws_api_gateway_stage.api.stage_name
+#   }
+# }
+
+# resource "aws_api_gateway_usage_plan_key" "api" {
+#   key_id        = var.api_key_id
+#   key_type      = "API_KEY"
+#   usage_plan_id = aws_api_gateway_usage_plan.api.id
+# }
+
+# LAMBDA INVOCATION PERMISSION
 resource "aws_lambda_permission" "apigw_lambda" {
   statement_id  = "AllowExecutionFromAPIGateway"
   action        = "lambda:InvokeFunction"
@@ -102,6 +110,4 @@ resource "aws_lambda_permission" "apigw_lambda" {
 
   source_arn = local.lambda_source_arn
 }
-
-  
 

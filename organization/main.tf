@@ -31,6 +31,9 @@ module "cdn" {
       api_domain_name = module.api_gateway.domain_name
       api_origin_id = "api"
 
+      api_secret_header = local.api_cdn_secret_header
+      api_secret = module.api_secret.value
+
       s3_domain_name = module.s3.domain_name
       s3_origin_id = "frontend"
 
@@ -52,6 +55,11 @@ module "s3" {
       bucket_access_OAI = [aws_cloudfront_origin_access_identity.cdn.iam_arn]
 }
 
+# resource "aws_api_gateway_api_key" "api" {
+#   name = "api-key"
+#   value = module.api_secret.value
+# }
+
 module "api_gateway" {
       source = "../modules/api_gateway"
 
@@ -60,15 +68,16 @@ module "api_gateway" {
       base_domain = var.base_domain
       cloudfront_dist = module.cdn.cloudfront_distribution
       lambda = module.lambda.function
+      # api_key_id = aws_api_gateway_api_key.api.id
 }
 
 module "lambda" {
       source = "../modules/lambda"
 
-      function_name = local.lambda_name
-      filename      = "${local.lambda_source}/lambdacode.zip"
-      handler       = local.lambda_handler
-      runtime       = local.lambda_runtime
+      function_name = "test"
+      filename      = "../resources/lambda/test.zip"
+      handler       = "test.handler"
+      runtime       = "nodejs12.x"
       aws_authorized_role = var.aws_authorized_role
 
       subnet_ids = module.vpc.private_subnets_ids
@@ -78,4 +87,13 @@ module "lambda" {
       }
 }
 
+module "api_secret" {
+  source = "../modules/secrets"
 
+  name_prefix = "api-cdn-secret-"
+  description = "Secret between CDN and API Gateway"
+  length      = 24
+  keepers     = {
+    header = local.api_cdn_secret_header
+  }
+}

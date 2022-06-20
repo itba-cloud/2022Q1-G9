@@ -20,3 +20,7 @@ variable "cloudfront_dist" {
 variable "lambda" {
   description = "The aws lambda to trigger"
 }
+# variable "api_key_id" {
+#   description = "The API gateway key id"
+#   type        = string
+# }
