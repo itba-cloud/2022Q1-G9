@@ -47,7 +47,7 @@ resource "aws_api_gateway_integration_response" "lambda_response" {
   resource_id = aws_api_gateway_resource.test.id
   http_method = aws_api_gateway_method.test_GET.http_method
   status_code = aws_api_gateway_method_response.response_200.status_code
-  
+
   depends_on = [
     aws_api_gateway_integration.lambda_response
   ]

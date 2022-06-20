@@ -3,8 +3,8 @@ data "aws_route53_zone" "this" {
 }
 
 resource "aws_acm_certificate" "this" {
-  domain_name       = var.base_domain
-  
+  domain_name = var.base_domain
+
   subject_alternative_names = ["*.${var.base_domain}"]
 
   validation_method = "DNS"

@@ -3,11 +3,11 @@ data "aws_iam_role" "lambda" {
 }
 
 resource "aws_lambda_function" "this" {
-  filename      = "${var.filename}"
+  filename = var.filename
 
-  function_name = var.function_name
-  role          = data.aws_iam_role.lambda.arn
-  handler       = var.handler
+  function_name    = var.function_name
+  role             = data.aws_iam_role.lambda.arn
+  handler          = var.handler
   source_code_hash = filebase64sha256(var.filename)
 
   runtime = var.runtime

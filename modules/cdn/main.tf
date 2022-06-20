@@ -1,10 +1,10 @@
 
 data "aws_cloudfront_cache_policy" "optimized" {
-    name = "Managed-CachingOptimized"
+  name = "Managed-CachingOptimized"
 }
 
 data "aws_cloudfront_cache_policy" "disabled" {
-    name = "Managed-CachingDisabled"
+  name = "Managed-CachingDisabled"
 }
 
 resource "aws_cloudfront_distribution" "main" {
@@ -26,28 +26,28 @@ resource "aws_cloudfront_distribution" "main" {
       value = var.api_secret
     }
     custom_origin_config {
-      http_port = 80
-      https_port = 443
+      http_port              = 80
+      https_port             = 443
       origin_protocol_policy = "https-only"
-      origin_ssl_protocols=  ["TLSv1.2"]
+      origin_ssl_protocols   = ["TLSv1.2"]
     }
   }
 
-  enabled             = true
-  is_ipv6_enabled     = false
+  enabled         = true
+  is_ipv6_enabled = false
 
   default_root_object = "index.html"
-  
-  comment             = var.comment
+
+  comment = var.comment
 
   aliases = length(var.aliases) > 0 ? var.aliases : []
- 
+
   default_cache_behavior {
     allowed_methods  = ["DELETE", "GET", "HEAD", "OPTIONS", "PATCH", "POST", "PUT"]
     cached_methods   = ["GET", "HEAD"]
     target_origin_id = var.s3_origin_id
     cache_policy_id  = data.aws_cloudfront_cache_policy.optimized.id
-    
+
     compress               = true
     viewer_protocol_policy = "redirect-to-https"
   }
@@ -75,7 +75,7 @@ resource "aws_cloudfront_distribution" "main" {
   tags = var.tags
 
   viewer_certificate {
-    acm_certificate_arn = var.certificate_arn
+    acm_certificate_arn      = var.certificate_arn
     minimum_protocol_version = "TLSv1.2_2021"
     ssl_support_method       = "sni-only"
   }

@@ -1,16 +1,16 @@
-variable src {
+variable "src" {
   description = "Bucket files source"
-  type = string
+  type        = string
 }
 
-variable name {
+variable "name" {
   description = "Bucket name"
-  type = string
+  type        = string
 }
 
-variable aws_region {
+variable "aws_region" {
   description = "AWS Region in which to deploy the application"
-  type = string
+  type        = string
 }
 
 variable "bucket_access_OAI" {

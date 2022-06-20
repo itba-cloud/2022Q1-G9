@@ -1,41 +1,41 @@
-variable s3_domain_name{
+variable "s3_domain_name" {
   description = "Cloudfront distribution domain name for s3"
-  type = string
+  type        = string
 }
 
-variable s3_origin_id{
+variable "s3_origin_id" {
   description = "Cloudfront distribution origin id for s3"
-  type = string
+  type        = string
 }
 
-variable api_domain_name{
+variable "api_domain_name" {
   description = "Cloudfront distribution domain name for api gateway"
-  type = string
+  type        = string
 }
 
-variable api_origin_id{
+variable "api_origin_id" {
   description = "Cloudfront distribution origin id for api gateway"
-  type = string
+  type        = string
 }
 
-variable comment{
+variable "comment" {
   description = "Cloudfront distribution comment"
-  type = string
+  type        = string
 }
 
-variable aliases{
+variable "aliases" {
   description = "Cloudfront distribution aliases"
-  type = list(string)
+  type        = list(string)
 }
 
-variable tags{
+variable "tags" {
   description = "Cloudfront distribution aliases"
-  type = map(any)
+  type        = map(any)
 }
 
-variable certificate_arn{
+variable "certificate_arn" {
   description = "Cloudfront distribution certificate arn"
-  type = string
+  type        = string
 }
 
 variable "OAI" {

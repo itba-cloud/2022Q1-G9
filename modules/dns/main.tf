@@ -8,8 +8,8 @@ resource "aws_route53_record" "primary" {
   type    = "A"
 
   alias {
-    name    = var.cloudfront_dist.domain_name
-    zone_id = var.cloudfront_dist.hosted_zone_id
+    name                   = var.cloudfront_dist.domain_name
+    zone_id                = var.cloudfront_dist.hosted_zone_id
     evaluate_target_health = false
   }
 }
@@ -20,8 +20,8 @@ resource "aws_route53_record" "www" {
   type    = "A"
 
   alias {
-    name    = var.cloudfront_dist.domain_name
-    zone_id = var.cloudfront_dist.hosted_zone_id
+    name                   = var.cloudfront_dist.domain_name
+    zone_id                = var.cloudfront_dist.hosted_zone_id
     evaluate_target_health = false
   }
 }
